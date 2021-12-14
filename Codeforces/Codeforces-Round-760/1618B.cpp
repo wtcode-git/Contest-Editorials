@@ -62,12 +62,23 @@ const int dy[] = {0, -1, 0, 1, 1, -1, -1, 1};
 
 
 void test_case(){
-    int a[7];
-    rep(i,7) cin>>a[i];
-    int x = a[0], y = a[1], z;
-    if(a[2] < x + y) z = a[2];
-    else if(a[2] == x + y) z = a[3];
-    cout << x << " " << y << " " << z;
+    int n;
+    cin>>n;
+    string a[n - 2];
+    rep(i, n - 2) cin >> a[i];
+    string ans = "";
+    bool f = 0;
+    rep(i, n - 2){
+        if(i + 1 < n - 2 && a[i+1][0] != a[i][1]){
+            f = 1;
+            ans+=a[i][0];
+            ans+=a[i][1];
+        }
+        else ans+=a[i][0];
+    }
+    ans+=a[n - 3][1];
+    if(!f) ans += 'a';
+    cout << ans;
     nx;
 }
 int main(){

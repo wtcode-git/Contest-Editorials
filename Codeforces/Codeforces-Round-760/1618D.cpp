@@ -62,12 +62,22 @@ const int dy[] = {0, -1, 0, 1, 1, -1, -1, 1};
 
 
 void test_case(){
-    int a[7];
-    rep(i,7) cin>>a[i];
-    int x = a[0], y = a[1], z;
-    if(a[2] < x + y) z = a[2];
-    else if(a[2] == x + y) z = a[3];
-    cout << x << " " << y << " " << z;
+    int n,k;
+    cin>>n>>k;
+    vector<int> a(n);
+    rep(i,n)cin>>a[i];
+    sort(all(a));
+    int ans = 0, i = n - 1, j = n - k - 1;
+    while(k > 0){
+        ans += (a[j] / a[i]);
+        i--, j--;
+        k--;
+    }
+    while(j >= 0){
+        ans += a[j];
+        j--;
+    }
+    cout << ans;
     nx;
 }
 int main(){

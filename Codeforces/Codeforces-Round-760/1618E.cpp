@@ -62,12 +62,44 @@ const int dy[] = {0, -1, 0, 1, 1, -1, -1, 1};
 
 
 void test_case(){
-    int a[7];
-    rep(i,7) cin>>a[i];
-    int x = a[0], y = a[1], z;
-    if(a[2] < x + y) z = a[2];
-    else if(a[2] == x + y) z = a[3];
-    cout << x << " " << y << " " << z;
+    ll n;
+    cin>>n;
+    ll a[n], sum = 0;
+    rep(i,n){
+        cin>>a[i];
+        sum += a[i];
+    }
+    if(n == 1){
+        cout << "YES\n" << a[0];
+        nx;
+        return;
+    }
+    ll x = (n * (n + 1)) / 2;
+    if(sum % x || sum / x < n) {
+        cout << "NO";
+        nx;
+        return;
+    }
+    ll div = sum / x;
+    vector<ll> ans(n);
+    for(int i = 1; i < n; i++){
+        ll val = - a[i] + a[i - 1] + div;
+        if(val <= 0 || val % n){
+            cout << "NO";
+            nx;
+            return;
+        }
+        ans[i] = val / n;
+    }
+    ll val = - a[0] + a[n - 1] + div;
+    if(val <= 0 || val % n){
+        cout << "NO";
+        nx;
+        return;
+    }
+    ans[0] = val / n;
+    cout << "YES\n";
+    rep(i, n) cout << ans[i] << " ";
     nx;
 }
 int main(){

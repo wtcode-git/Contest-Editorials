@@ -59,21 +59,50 @@ ll ncr(int n, int r) {
 const int dx[] = {1, 0, -1, 0, 1, 1, -1, -1};
 const int dy[] = {0, -1, 0, 1, 1, -1, -1, 1};
 ////////////////////////////////////////////////////////////////////
+map<ll,ll> mp;
 
+void solve(ll x, ll y){
+    if(!x) {
+        return;
+    }
+    if(mp[x] == 1) return;
+    mp[x] = 1;
+    vector<ll> v;
+    ll u = x;
+    while(u){
+        v.push_back(u % 2);
+        u /= 2;
+    }
+    ll sz = v.size();
+    ll num1 = 0, mult = 0;
+    ll i = 0;
+    while(i < sz && !v[i])i++;
+    for(ll j = sz - 1;j >= i; j--){
+        if(!v[j]) {
+            mult++;
+            continue;
+        }
+        if(num1 >= (ll)1e18 - (1LL << mult)) return;
+        num1 += (1LL << mult);
+        mult++;
+    }
+    if(num1 > y && x > y) return;
+    solve(num1, y);
+    if(num1 >= (ll)1e18 - (1LL << sz)) return;
+    solve(num1 + (1LL << sz), y);
+}
 
 void test_case(){
-    int a[7];
-    rep(i,7) cin>>a[i];
-    int x = a[0], y = a[1], z;
-    if(a[2] < x + y) z = a[2];
-    else if(a[2] == x + y) z = a[3];
-    cout << x << " " << y << " " << z;
-    nx;
+    ll x,y;
+    cin>>x>>y;
+    solve(x, y);
+    if(mp[y] || x == y) cout << "YES";
+    else cout << "NO";
 }
 int main(){
     fastio();
     int tc = 1;
-    cin>>tc;
+    // cin>>tc;
     while(tc--){
         test_case();
         done:;

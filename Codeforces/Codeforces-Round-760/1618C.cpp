@@ -62,12 +62,37 @@ const int dy[] = {0, -1, 0, 1, 1, -1, -1, 1};
 
 
 void test_case(){
-    int a[7];
-    rep(i,7) cin>>a[i];
-    int x = a[0], y = a[1], z;
-    if(a[2] < x + y) z = a[2];
-    else if(a[2] == x + y) z = a[3];
-    cout << x << " " << y << " " << z;
+    ll n;
+    cin>>n;
+    ll a[n];
+    rep(i,n)cin>>a[i];
+    ll even = a[0];
+    for(int i = 2; i < n; i += 2){
+        even = __gcd(a[i], even);
+    }
+    bool f = 1;
+    for(int i = 1; i < n; i += 2){
+        if(a[i] % even == 0) f = 0;
+    }
+    if(f) {
+        cout << even;
+        nx;
+        return;
+    }
+    even = a[1];
+    for(int i = 1; i < n; i += 2){
+        even = __gcd(a[i], even);
+    }
+    f = 1;
+    for(int i = 0; i < n; i += 2){
+        if(a[i] % even == 0) f = 0;
+    }
+    if(f) {
+        cout << even;
+        nx;
+        return;
+    }
+    cout << 0;
     nx;
 }
 int main(){
