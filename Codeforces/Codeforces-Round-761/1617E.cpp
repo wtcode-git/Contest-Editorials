@@ -2,8 +2,15 @@
 #pragma GCC target("avx,avx2,fma")
 
 #include <bits/stdc++.h>
-
 using namespace std;
+
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/detail/standard_policies.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+// #define pbds tree<int, int, less<int>, rb_tree_tag, tree_order_statistics_node_update>
+
+#define ll long long
 
 void fastIO() {
     ios_base::sync_with_stdio(0);
@@ -14,41 +21,68 @@ void fastIO() {
 
 inline bool isPowOf2(long long n) { return (n & (n - 1)) == 0; }
 
-void reduce(long long &n) {
-    if (isPowOf2(n)) {
-        n = 0;
-        return;
-    }
-    int b = 0;
-    while ((1LL << b) < n)
-        b++;
-    n = (1LL << b) - n;
+int reduce(int chocolate) {
+    if (isPowOf2(chocolate))
+        return 0;
+    for (int i = 0;; i++)
+        if ((1 << i) >= chocolate)
+            return (1 << i) - chocolate;
 }
+
+class christmas_tree {
+private:
+    unordered_map<int, pair<int, unordered_set<int>>> edges;
+
+public:
+    int i1, i2;
+    int ans;
+    christmas_tree() { i1 = i2 = ans = 0, edges.clear(); }
+    void nodeIndx(int node, int indx) { edges[node].first = indx; }
+    void add_edge(int u, int v) {
+        edges[u].first = 0;
+        edges[v].first = 0;
+        edges[u].second.insert(v);
+    }
+    pair<int, int> diameter(int node) {
+        int d1 = 0, d2 = 0;
+        int _i1 = 0, _i2 = 0;
+        for (int child : edges[node].second) {
+            pair<int, int> tmp = diameter(child);
+            if (tmp.first > d1)
+                d2 = d1, _i2 = _i1, d1 = tmp.first, _i1 = tmp.second;
+            else if (tmp.first > d2)
+                d2 = tmp.first, _i2 = tmp.second;
+        }
+        if (_i1 == 0 && edges[node].first)
+            _i1 = edges[node].first;
+        else if (_i2 == 0 && edges[node].first)
+            _i2 = edges[node].first;
+        int dm = d1 + d2 + 1;
+        if (_i1 && _i2 && dm > ans)
+            i1 = _i1, i2 = _i2, ans = dm;
+        return make_pair(d1 + 1, _i1);
+    }
+};
 
 void solve() {
     int n;
     cin >> n;
-    vector<int> data(n, 0);
+    christmas_tree data;
+    vector<int> chocolates(0);
     for (int i = 0; i < n; i++) {
-        cin >> data[i];
+        int chocolate;
+        cin >> chocolate;
+        chocolates.push_back(chocolate);
+        while (chocolate != 0) {
+            int chocolate_r = reduce(chocolate);
+            data.add_edge(chocolate_r, chocolate);
+            chocolate = chocolate_r;
+        }
     }
-    long long a = data[0], b = data[1];
-    vector<long long> redn[2];
-    redn[0].clear();
-    redn[1].clear();
-    while (a != 0) {
-        redn[0].push_back(a);
-        reduce(a);
-    }
-    while (b != 0) {
-        redn[1].push_back(b);
-        reduce(b);
-    }
-    while (!(redn[0].empty() || redn[1].empty()) && (redn[0].back() == redn[1].back())) {
-        redn[0].pop_back();
-        redn[1].pop_back();
-    }
-    cout << 1 << " " << 2 << " " << redn[0].size() + redn[1].size() << endl;
+    for (int i = 0; i < n; i++)
+        data.nodeIndx(chocolates[i], i + 1);
+    data.diameter(0);
+    cout << data.i1 << " " << data.i2 << " " << data.ans - 1 << endl;
 }
 
 int main() {
